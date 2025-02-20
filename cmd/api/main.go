@@ -57,6 +57,7 @@ func main() {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+	defer db.Close()
 
 	if err := app.ShutdownWithContext(ctx); err != nil {
 		slog.Error("Server forced to shutdown: ", "error", err)
