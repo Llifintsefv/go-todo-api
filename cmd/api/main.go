@@ -24,14 +24,14 @@ func main() {
 	cfg, err := config.NewConfig()
 
 	if err != nil {
-		slog.Error("failed to load config", err)
+		slog.Error("failed to load config", "error", err)
 		os.Exit(1)
 	}
 
 	db, err := postgres.NewDB(cfg.DBConnStr)
 
 	if err != nil {
-		slog.Error("failed to connect to database", err)
+		slog.Error("failed to connect to database", "error", err)
 		os.Exit(1)
 	}
 
@@ -56,8 +56,8 @@ func main() {
 	slog.Info("Shutting down server...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer db.Close(ctx)
 	defer cancel()
-	defer db.Close()
 
 	if err := app.ShutdownWithContext(ctx); err != nil {
 		slog.Error("Server forced to shutdown: ", "error", err)

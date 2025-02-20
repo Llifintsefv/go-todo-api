@@ -9,5 +9,7 @@ import (
 func SetupRouter(taskHandler handler.TaskHandler) *fiber.App {
 	app := fiber.New()
 
+	app.Post("/tasks",taskHandler.CreateTask)
+
 	return app
 }
