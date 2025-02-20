@@ -32,7 +32,7 @@ func NewConfig() (*Config, error) {
 	}
 
 	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s", dbUser, dbPassword, dbHost, dbPort, dbName, dbSSLMode)
-	
+
 	port := os.Getenv("APP_PORT")
 	if port == "" {
 		port = "8080"
