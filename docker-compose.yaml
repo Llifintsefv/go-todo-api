@@ -2,8 +2,6 @@ services:
   db:
     image: postgres:latest
     restart: always
-    env_file:
-      - ./cmd/api/.env
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -16,8 +14,6 @@ services:
   migrate:
     image: migrate/migrate
     restart: on-failure
-    env_file:
-      - ./cmd/api/.env
     depends_on:
       - db
     volumes:
@@ -30,6 +26,22 @@ services:
         'postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}?sslmode=disable',
         'up',
       ]
+
+  api:
+    image: go-todo-api
+    restart: always
+    depends_on:
+      - db
+      - migrate
+    ports:
+      - '${APP_PORT}:8080'
+    environment:
+      DB_HOST: db
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_SSL_MODE: ${DB_SSL_MODE}
 
 volumes:
   postgres_data:
