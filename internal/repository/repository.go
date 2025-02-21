@@ -8,5 +8,6 @@ import (
 type TaskRepository interface {
 	CreateTask(ctx context.Context, CreateTask models.Task) (models.Task, error)
 	GetTasks(ctx context.Context) ([]models.Task, error)
-	GetTask(ctx context.Context, taskId int) (models.Task, error)
+	UpdateTask(ctx context.Context, updateRequest models.Task) (models.Task, error)
+	DeleteTask(ctx context.Context, taskID int) error
 }

@@ -10,7 +10,8 @@ import (
 type TaskService interface {
 	CreateTask(ctx context.Context, CreateRequest models.Task) (models.Task, error)
 	GetTasks(ctx context.Context) ([]models.Task, error)
-	GetTask(ctx context.Context, taskId int) (models.Task, error)
+	UpdateTask(ctx context.Context, updateRequest models.Task) (models.Task, error)
+	DeleteTask(ctx context.Context, taskID int) error
 }
 
 type taskService struct {
@@ -42,6 +43,10 @@ func (s *taskService) GetTasks(ctx context.Context) ([]models.Task, error) {
 	return s.repo.GetTasks(ctx)
 }
 
-func (s *taskService) GetTask(ctx context.Context, taskId int) (models.Task, error) {
-	return s.repo.GetTask(ctx, taskId)
+func (s *taskService) UpdateTask(ctx context.Context, updateRequest models.Task) (models.Task, error) {
+	return s.repo.UpdateTask(ctx, updateRequest)
+}
+
+func (s *taskService) DeleteTask(ctx context.Context, taskID int) error {
+	return s.repo.DeleteTask(ctx, taskID)
 }

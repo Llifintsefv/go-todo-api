@@ -54,15 +54,28 @@ func (r *taskRepository) GetTasks(ctx context.Context) ([]models.Task, error) {
 	return tasks, nil
 }
 
-func (r *taskRepository) GetTask(ctx context.Context, taskId int) (models.Task, error) {
-	const query = `SELECT * FROM tasks WHERE id = ($1)`
+func (r *taskRepository) UpdateTask(ctx context.Context, updateRequest models.Task) (models.Task, error) {
+	const query = "UPDATE tasks SET title = $1, description = $2, status = $3, updated_at = CURRENT_TIMESTAMP WHERE id = $4 RETURNING id, title, description, status, created_at, updated_at;"
 	var task models.Task
-
-	err := r.db.QueryRow(ctx, query, taskId).Scan(&task.ID, &task.Description, &task.Title, &task.Status, &task.CreatedAt, &task.UpdatedAt)
-	if err != nil {
-		slog.Error("Error get task", slog.Any("error", err))
+	err := r.db.QueryRow(ctx, query, updateRequest.Title, updateRequest.Description, updateRequest.Status, updateRequest.ID).Scan(&task.ID, &task.Title, &task.Description, &task.Status, &task.CreatedAt, &task.UpdatedAt)
+	if err == pgx.ErrNoRows {
+		return models.Task{}, models.ErrTaskNotFound
+	} else if err != nil {
+		r.logger.Error("Error updating task", slog.Any("error", err))
 		return models.Task{}, err
 	}
-
 	return task, nil
+}
+
+func (r *taskRepository) DeleteTask(ctx context.Context, taskID int) error {
+	const query = "DELETE FROM tasks WHERE id = $1;"
+	result, err := r.db.Exec(ctx, query, taskID)
+	if err != nil {
+		r.logger.Error("Error deleting task", slog.Any("error", err))
+		return err
+	}
+	if result.RowsAffected() == 0 {
+		return models.ErrTaskNotFound
+	}
+	return nil
 }
