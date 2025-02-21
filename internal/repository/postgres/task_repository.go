@@ -32,3 +32,37 @@ func (r *taskRepository) CreateTask(ctx context.Context, CreateRequest models.Ta
 
 	return task, nil
 }
+
+func (r *taskRepository) GetTasks(ctx context.Context) ([]models.Task, error) {
+	const query = `SELECT * FROM tasks`
+	var tasks []models.Task
+	rows, err := r.db.Query(ctx, query)
+	if err != nil {
+		slog.Error("Error get tasks", slog.Any("error", err))
+		return []models.Task{}, err
+	}
+
+	for rows.Next() {
+		var task models.Task
+		if err := rows.Scan(&task.ID, &task.Description, &task.Title, &task.Status, &task.CreatedAt, &task.UpdatedAt); err != nil {
+			slog.Error("Error get task", "error", err)
+			return []models.Task{}, err
+		}
+		tasks = append(tasks, task)
+	}
+
+	return tasks, nil
+}
+
+func (r *taskRepository) GetTask(ctx context.Context, taskId int) (models.Task, error) {
+	const query = `SELECT * FROM tasks WHERE id = ($1)`
+	var task models.Task
+
+	err := r.db.QueryRow(ctx, query, taskId).Scan(&task.ID, &task.Description, &task.Title, &task.Status, &task.CreatedAt, &task.UpdatedAt)
+	if err != nil {
+		slog.Error("Error get task", slog.Any("error", err))
+		return models.Task{}, err
+	}
+
+	return task, nil
+}

@@ -9,6 +9,8 @@ import (
 
 type TaskService interface {
 	CreateTask(ctx context.Context, CreateRequest models.Task) (models.Task, error)
+	GetTasks(ctx context.Context) ([]models.Task, error)
+	GetTask(ctx context.Context, taskId int) (models.Task, error)
 }
 
 type taskService struct {
@@ -25,7 +27,7 @@ func NewTaskService(repo repository.TaskRepository, logger *slog.Logger) TaskSer
 
 func (s *taskService) CreateTask(ctx context.Context, CreateRequest models.Task) (models.Task, error) {
 
-	CreateRequest.Status = "new"
+	CreateRequest.Status = models.StatusNew
 
 	task, err := s.repo.CreateTask(ctx, CreateRequest)
 	if err != nil {
@@ -34,4 +36,12 @@ func (s *taskService) CreateTask(ctx context.Context, CreateRequest models.Task)
 	}
 
 	return task, nil
+}
+
+func (s *taskService) GetTasks(ctx context.Context) ([]models.Task, error) {
+	return s.repo.GetTasks(ctx)
+}
+
+func (s *taskService) GetTask(ctx context.Context, taskId int) (models.Task, error) {
+	return s.repo.GetTask(ctx, taskId)
 }

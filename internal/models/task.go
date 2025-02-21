@@ -11,3 +11,8 @@ type Task struct {
 	UpdatedAt   time.Time `json:"updated_at" db:"updated_at"`
 }
 
+const (
+	StatusNew        = "new"
+	StatusInProgress = "in_progress"
+	StatusDone       = "done"
+)
