@@ -16,3 +16,12 @@ const (
 	StatusInProgress = "in_progress"
 	StatusDone       = "done"
 )
+
+func IsValidStatus(status string) bool {
+	switch status {
+	case StatusNew, StatusInProgress, StatusDone:
+		return true
+	default:
+		return false
+	}
+}

@@ -75,6 +75,12 @@ func (h *taskHandler) UpdateTask(c *fiber.Ctx) error {
 		h.logger.Error("Error parsing request body", slog.Any("error", err))
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Error parsing request body"})
 	}
+
+	if updateRequest.Status != "" && !models.IsValidStatus(updateRequest.Status) {
+		h.logger.Error("Invalid status value", slog.Any("error", err))
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid status value", "allowedstatuses": []string{models.StatusNew, models.StatusInProgress, models.StatusDone}})
+	}
+
 	updateRequest.ID = taskId
 	task, err := h.service.UpdateTask(ctx, updateRequest)
 	if err == models.ErrTaskNotFound {
@@ -101,13 +107,4 @@ func (h *taskHandler) DeleteTask(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Internal Server Error"})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Task deleted successfully"})
-}
-
-func isValidStatus(status string) bool {
-	switch status {
-	case models.StatusNew, models.StatusInProgress, models.StatusDone:
-		return true
-	default:
-		return false
-	}
 }
