@@ -11,7 +11,7 @@ func SetupRouter(taskHandler handler.TaskHandler) *fiber.App {
 
 	app.Post("/tasks", taskHandler.CreateTask)
 	app.Get("/tasks", taskHandler.GetTasks)
-	app.Get("/tasks/:taskId", taskHandler.UpdateTask)
+	app.Put("/tasks/:taskId", taskHandler.UpdateTask)
 	app.Delete("/tasks/:taskId", taskHandler.DeleteTask)
 	return app
 }
