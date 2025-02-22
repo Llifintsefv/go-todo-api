@@ -10,7 +10,7 @@
    git clone https://github.com/Llifintsefv/go-todo-api.git
    ```
 
-2. Файл `.env` в корневой директории со следующим содержимым:
+2. Файл `.env` в директории cmd/api со следующим содержимым:
 
    ```env
     DB_HOST=db
