@@ -13,7 +13,7 @@
 2. Файл `.env` в корневой директории со следующим содержимым:
 
    ```env
-    DB_HOST=localhost
+    DB_HOST=db
     DB_PORT=5432
     DB_USER=postgres
     DB_PASSWORD=mysecretpassword
